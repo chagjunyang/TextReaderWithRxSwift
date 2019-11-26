@@ -31,7 +31,7 @@ class ViewController: UIViewController {
         self.view.addSubview(buttonsView)
         
         buttonsView.playButton.rx.tap.bind(onNext: {
-            self.speachViewModel.play(self.textView.text)
+            self.speachViewModel.input.speachText.onNext(self.textView.text)
         }).disposed(by: disposeBag)
         
         buttonsView.pauseButton.rx.tap.bind(onNext: speachViewModel.pause).disposed(by: disposeBag)
@@ -48,6 +48,14 @@ class ViewController: UIViewController {
         self.view.backgroundColor = .white
         
         self.buildUpConstraints()
+        
+        speachViewModel.output.didFinish.drive(onNext: { (utterance) in
+            print("didfinish \(utterance)")
+        }).disposed(by: disposeBag)
+        
+        speachViewModel.output.wilSpeakRange.drive(onNext: { item in
+            print("wilSpeakRange \(item)")
+        }).disposed(by: disposeBag)
     }
     
     deinit {

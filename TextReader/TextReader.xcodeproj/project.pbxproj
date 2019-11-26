@@ -17,6 +17,9 @@
 		2D8C3D32237CE1B8007F4B86 /* ButtonsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D8C3D31237CE1B8007F4B86 /* ButtonsViewModel.swift */; };
 		2D8C3D34237CE59F007F4B86 /* SpeachViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D8C3D33237CE59F007F4B86 /* SpeachViewModel.swift */; };
 		2E383BE4111D70B9392E7069 /* Pods_TextReaderTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6F94AF7B2FC722951D5589DD /* Pods_TextReaderTests.framework */; };
+		9F1A6B3C238D7A3D00FD9674 /* TextViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F1A6B3B238D7A3D00FD9674 /* TextViewModel.swift */; };
+		9F1A6B3E238D7A6A00FD9674 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F1A6B3D238D7A6A00FD9674 /* DataStore.swift */; };
+		9F1A6B40238D7CBD00FD9674 /* ViewModelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F1A6B3F238D7CBD00FD9674 /* ViewModelType.swift */; };
 		EE093E6F10D6BD293F5F3DD9 /* Pods_TextReader.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A154DF04E4ACEBDD0CD3AB0 /* Pods_TextReader.framework */; };
 /* End PBXBuildFile section */
 
@@ -48,6 +51,9 @@
 		6F94AF7B2FC722951D5589DD /* Pods_TextReaderTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TextReaderTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		75DACDEC8A123EFD0734B4EB /* Pods-TextReader.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TextReader.release.xcconfig"; path = "Target Support Files/Pods-TextReader/Pods-TextReader.release.xcconfig"; sourceTree = "<group>"; };
 		9A154DF04E4ACEBDD0CD3AB0 /* Pods_TextReader.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TextReader.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9F1A6B3B238D7A3D00FD9674 /* TextViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextViewModel.swift; sourceTree = "<group>"; };
+		9F1A6B3D238D7A6A00FD9674 /* DataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
+		9F1A6B3F238D7CBD00FD9674 /* ViewModelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelType.swift; sourceTree = "<group>"; };
 		DA72A6AA2BF0724CBF1A5BC6 /* Pods-TextReader.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TextReader.debug.xcconfig"; path = "Target Support Files/Pods-TextReader/Pods-TextReader.debug.xcconfig"; sourceTree = "<group>"; };
 		E1C6C3F0D3B56567B8A23C0A /* Pods-TextReaderTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TextReaderTests.release.xcconfig"; path = "Target Support Files/Pods-TextReaderTests/Pods-TextReaderTests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -127,8 +133,11 @@
 		2D8C3D2E237CE17C007F4B86 /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
+				9F1A6B3F238D7CBD00FD9674 /* ViewModelType.swift */,
 				2D8C3D31237CE1B8007F4B86 /* ButtonsViewModel.swift */,
 				2D8C3D33237CE59F007F4B86 /* SpeachViewModel.swift */,
+				9F1A6B3B238D7A3D00FD9674 /* TextViewModel.swift */,
+				9F1A6B3D238D7A6A00FD9674 /* DataStore.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -321,9 +330,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9F1A6B3E238D7A6A00FD9674 /* DataStore.swift in Sources */,
 				2D8C3D34237CE59F007F4B86 /* SpeachViewModel.swift in Sources */,
 				2D8C3D32237CE1B8007F4B86 /* ButtonsViewModel.swift in Sources */,
 				2D8C3D30237CE1AF007F4B86 /* ButtonsView.swift in Sources */,
+				9F1A6B40238D7CBD00FD9674 /* ViewModelType.swift in Sources */,
+				9F1A6B3C238D7A3D00FD9674 /* TextViewModel.swift in Sources */,
 				2D678428237BC2AD0023EB27 /* ViewController.swift in Sources */,
 				2D678426237BC2AD0023EB27 /* AppDelegate.swift in Sources */,
 			);
