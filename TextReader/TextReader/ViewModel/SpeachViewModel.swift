@@ -13,17 +13,9 @@ import RxCocoa
 
 
 class SpeachViewModel: NSObject {
-    struct Input {
-        let speachText: AnyObserver<String>
-    }
-    
-    struct Output {
-        let didFinish: Driver<AVSpeechUtterance>
-        let wilSpeakRange: Driver<(NSRange, AVSpeechUtterance)>
-    }
-    
+    // MARK: Public
     lazy var input: Input = {
-        return Input(speachText: inputSubject.asObserver())
+        return Input(speachText: inputSubject)
     }()
     
     lazy var output: Output = {
@@ -33,9 +25,10 @@ class SpeachViewModel: NSObject {
         return Output(didFinish: didFinishDriver, wilSpeakRange: willSpeakDriver)
     }()
     
-    private let inputSubject = PublishSubject<String>()
-    private let didFinishSubject = PublishSubject<AVSpeechUtterance>()
-    private let willSpeakRangeSubject = PublishSubject<(NSRange, AVSpeechUtterance)>()
+    // MARK: Private
+    private let inputSubject = PublishRelay<String>()
+    private let didFinishSubject = PublishRelay<AVSpeechUtterance>()
+    private let willSpeakRangeSubject = PublishRelay<(NSRange, AVSpeechUtterance)>()
     private var disposeBag = DisposeBag()
     
     private let synthesizer = AVSpeechSynthesizer()
@@ -44,17 +37,30 @@ class SpeachViewModel: NSObject {
     override init() {
         super.init()
         
-        inputSubject.subscribe(onNext: inputSubscribe).disposed(by: disposeBag)
+        inputSubject.subscribe(onNext: {text in
+            self.play(text)
+        }).disposed(by: disposeBag)
         
         synthesizer.delegate = self
     }
     
-    func inputSubscribe(string: String) {
-        self.play(string)
-    }
-    
     deinit {
         disposeBag = DisposeBag()
+    }
+}
+
+
+// MARK: Input Output Define
+
+
+extension SpeachViewModel {
+    struct Input {
+        let speachText: PublishRelay<String>
+    }
+    
+    struct Output {
+        let didFinish: Driver<AVSpeechUtterance>
+        let wilSpeakRange: Driver<(NSRange, AVSpeechUtterance)>
     }
 }
 
@@ -75,6 +81,10 @@ extension SpeachViewModel: AVSpeechSynthesizerDelegate {
             
             synthesizer.speak(utterance)
         }
+        
+        let test: AnyObserver<String>
+        let test2: PublishSubject<String>
+        
     }
     
     func pause() {
@@ -88,11 +98,11 @@ extension SpeachViewModel: AVSpeechSynthesizerDelegate {
     // MARK: AVSpeechSynthesizerDelegate
     
     func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, willSpeakRangeOfSpeechString characterRange: NSRange, utterance: AVSpeechUtterance) {
-        willSpeakRangeSubject.onNext((characterRange, utterance))
+        willSpeakRangeSubject.accept((characterRange, utterance))
     }
     
     func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
-        didFinishSubject.onNext(utterance)
+        didFinishSubject.accept(utterance)
     }
 }
 

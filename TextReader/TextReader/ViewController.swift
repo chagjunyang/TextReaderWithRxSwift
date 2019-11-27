@@ -16,7 +16,6 @@ class ViewController: UIViewController {
         let view = UITextView()
         
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.text = "안녕하세요. 만나서 반갑습니다."
         
         self.view.addSubview(view)
         
@@ -30,32 +29,18 @@ class ViewController: UIViewController {
         
         self.view.addSubview(buttonsView)
         
-        buttonsView.playButton.rx.tap.bind(onNext: {
-            self.speachViewModel.input.speachText.onNext(self.textView.text)
-        }).disposed(by: disposeBag)
-        
-        buttonsView.pauseButton.rx.tap.bind(onNext: speachViewModel.pause).disposed(by: disposeBag)
-        buttonsView.endButton.rx.tap.bind(onNext: speachViewModel.end).disposed(by: disposeBag)
-        
         return buttonsView
     }()
     
-    var speachViewModel = SpeachViewModel()
+    var textViewModel = TextViewModel()
     var disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .white
         
-        self.buildUpConstraints()
-        
-        speachViewModel.output.didFinish.drive(onNext: { (utterance) in
-            print("didfinish \(utterance)")
-        }).disposed(by: disposeBag)
-        
-        speachViewModel.output.wilSpeakRange.drive(onNext: { item in
-            print("wilSpeakRange \(item)")
-        }).disposed(by: disposeBag)
+        buildUpConstraints()
+        bindUI()
     }
     
     deinit {
@@ -75,5 +60,22 @@ class ViewController: UIViewController {
             buttonsView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -15),
             buttonsView.bottomAnchor.constraint(equalTo: self.view.layoutMarginsGuide.bottomAnchor, constant: -25),
             ])
+    }
+}
+
+// MARK: Bind
+
+extension ViewController {
+    func bindUI() {
+        buttonsView.playButton.rx.tap
+        
+        textViewModel.output.text.drive(textView.rx.text).disposed(by: disposeBag)
+        buttonsView.playButton.rx.tap.bind(to: textViewModel.start).disposed(by: disposeBag)
+        buttonsView.pauseButton.rx.tap.bind(to: textViewModel.pause).disposed(by: disposeBag)
+        buttonsView.endButton.rx.tap.bind(to: textViewModel.end).disposed(by: disposeBag)
+
+        textViewModel.output.currentReadText.drive(onNext: {range in
+            print(range)
+        }).disposed(by: disposeBag)
     }
 }

@@ -7,28 +7,53 @@
 //
 
 import XCTest
+import RxSwift
 @testable import TextReader
 
 class TextReaderTests: XCTestCase {
-
+    var disposeBag = DisposeBag()
+    
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
-
+    
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
-
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    
+    func testSpeach() {
+        let speachString = "Hellow"
+        let expectation = XCTestExpectation(description: "testSpeach")
+        let speachViewModel = SpeachViewModel()
+        
+        speachViewModel.output.wilSpeakRange.drive(onNext: { (item) in
+            expectation.fulfill()
+            
+            XCTAssertEqual(item.1.speechString, speachString)
+            
+        }).disposed(by: disposeBag)
+        
+        speachViewModel.input.speachText.onNext(speachString)
+        
+        wait(for: [expectation], timeout: 10)
     }
-
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
+    
+    func testDataStore() {
+        let expectation = XCTestExpectation(description: "testDataStore")
+        let dataStore = DataStore()
+        
+        dataStore.output.text.drive(onNext: { item in
+            expectation.fulfill()
+            
+            XCTAssertTrue(item.count > 0)
+        }).disposed(by: disposeBag)
+        
+        dataStore.loadNextText()
+        
+        wait(for: [expectation], timeout: 3)
     }
-
+    
+    func testTextViewModel() {
+        //output으로 텍스트 잘 나오는지만 테스트
+    }
 }
