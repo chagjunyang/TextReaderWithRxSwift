@@ -2,4 +2,4 @@
 project.xcworkspace/
 Xcuserdata/
 *.xcuserdata
-*.xcshareddata
+*xcshareddata
