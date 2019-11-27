@@ -12,26 +12,31 @@ import RxCocoa
 
 class DataStore {
     // MARK: Input
-    func loadNextText() {
-        textSubject.accept("이건 두번째 텍스트")
+    struct Input {
+        let loadNextText = PublishRelay<Void>()
+        let nextText = BehaviorRelay<String>(value: "초기 텍스트.초기 텍스트.초기 텍스트.")
     }
     
     // MARK: Output
     struct Output {
-        var text: Driver<String>
+        let text: Driver<String>
     }
     
-    // MARK: Public
-    var output: Output
-    
-    func currentText() -> String {
-        return textSubject.value
-    }
-    
-    // MARK: Private
-    private let textSubject = BehaviorRelay<String>(value: "안녕하세요. 만나서반갑습니다. 이건 긴 문장입니다. 정말로 길어요.")
+    let input = Input()
+    let output: Output
+    var disposeBag = DisposeBag()
     
     init() {
-        self.output = Output(text: textSubject.asDriver(onErrorJustReturn: ""))
+        output = Output(text: input.nextText.asDriver(onErrorJustReturn: ""))
+        
+        input.loadNextText.subscribe(onNext: loadNextText).disposed(by: disposeBag)
+    }
+    
+    deinit {
+        disposeBag = DisposeBag()
+    }
+    
+    func loadNextText() {
+        input.nextText.accept("두 번쨰 텍스트.두 번쨰 텍스트.두 번쨰 텍스트.")
     }
 }

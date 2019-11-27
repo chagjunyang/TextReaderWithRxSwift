@@ -19,29 +19,28 @@ class SpeachViewModel: NSObject {
     }()
     
     lazy var output: Output = {
-        let didFinishDriver = didFinishSubject.asDriver(onErrorJustReturn: AVSpeechUtterance(string: ""))
-        let willSpeakDriver = willSpeakRangeSubject.asDriver(onErrorJustReturn: (NSRange(location: 0, length: 0), AVSpeechUtterance(string: "")))
+        let didFinishDriver = didFinishRelay.asDriver(onErrorJustReturn: AVSpeechUtterance(string: ""))
+        let willSpeakDriver = willSpeakRangeRelay.asDriver(onErrorJustReturn: (NSRange(location: 0, length: 0), AVSpeechUtterance(string: "")))
         
         return Output(didFinish: didFinishDriver, wilSpeakRange: willSpeakDriver)
     }()
     
     // MARK: Private
     private let inputSubject = PublishRelay<String>()
-    private let didFinishSubject = PublishRelay<AVSpeechUtterance>()
-    private let willSpeakRangeSubject = PublishRelay<(NSRange, AVSpeechUtterance)>()
+    private let didFinishRelay = PublishRelay<AVSpeechUtterance>()
+    private let willSpeakRangeRelay = PublishRelay<(NSRange, AVSpeechUtterance)>()
     private var disposeBag = DisposeBag()
     
     private let synthesizer = AVSpeechSynthesizer()
     private var rate: Float = 0.5 //TODO:yang - change public
     
+    // MARK: LifeCycle
     override init() {
         super.init()
-        
-        inputSubject.subscribe(onNext: {text in
-            self.play(text)
-        }).disposed(by: disposeBag)
-        
+
         synthesizer.delegate = self
+        
+        inputSubject.subscribe(onNext: play).disposed(by: disposeBag)
     }
     
     deinit {
@@ -69,22 +68,16 @@ extension SpeachViewModel {
 
 
 extension SpeachViewModel: AVSpeechSynthesizerDelegate {
-    func play(_ string: String?) {
+    func play(_ string: String) {
         if synthesizer.isSpeaking {
             synthesizer.continueSpeaking()
         }
         
-        if let _string = string {
-            let utterance = AVSpeechUtterance(string: _string)
-            utterance.voice = AVSpeechSynthesisVoice(language: "ko-KR")
-            utterance.rate = rate
-            
-            synthesizer.speak(utterance)
-        }
+        let utterance = AVSpeechUtterance(string: string)
+        utterance.voice = AVSpeechSynthesisVoice(language: "ko-KR")
+        utterance.rate = rate
         
-        let test: AnyObserver<String>
-        let test2: PublishSubject<String>
-        
+        synthesizer.speak(utterance)
     }
     
     func pause() {
@@ -98,11 +91,11 @@ extension SpeachViewModel: AVSpeechSynthesizerDelegate {
     // MARK: AVSpeechSynthesizerDelegate
     
     func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, willSpeakRangeOfSpeechString characterRange: NSRange, utterance: AVSpeechUtterance) {
-        willSpeakRangeSubject.accept((characterRange, utterance))
+        willSpeakRangeRelay.accept((characterRange, utterance))
     }
     
     func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
-        didFinishSubject.accept(utterance)
+        didFinishRelay.accept(utterance)
     }
 }
 

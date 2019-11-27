@@ -14,11 +14,8 @@ import AVFoundation
 
 class TextViewModel {
     // MARK: Public
+    let input = Input()
     let output: Output
-    
-    let start = PublishRelay<Void>()
-    let pause = PublishRelay<Void>()
-    let end = PublishRelay<Void>()
     
     // MARK: Private
     private let speachViewModel = SpeachViewModel()
@@ -29,9 +26,9 @@ class TextViewModel {
     init() {
         output = Output(text: dataStore.output.text, currentReadText: currentReadTextSubject.asDriver(onErrorJustReturn: NSRange(location: 0, length: 0)))
         
-        start.subscribe(onNext: doStart).disposed(by: disposeBag)
-        pause.subscribe(onNext: doPpause).disposed(by: disposeBag)
-        end.subscribe(onNext: doEnd).disposed(by: disposeBag)
+        input.start.subscribe(onNext: doStart).disposed(by: disposeBag)
+        input.pause.subscribe(onNext: doPpause).disposed(by: disposeBag)
+        input.end.subscribe(onNext: doEnd).disposed(by: disposeBag)
         
         speachViewModel.output.didFinish.drive(onNext: didFinishUtterance).disposed(by: disposeBag)
         speachViewModel.output.wilSpeakRange.drive(onNext: wilSpeakRange).disposed(by: disposeBag)
@@ -47,13 +44,19 @@ class TextViewModel {
 
 
 extension TextViewModel {
+    struct Input {
+        let start = PublishRelay<Void>()
+        let pause = PublishRelay<Void>()
+        let end = PublishRelay<Void>()
+    }
+    
     struct Output {
         var text: Driver<String>
         var currentReadText: Driver<NSRange>
     }
     
     func doStart() {
-        speachViewModel.input.speachText.accept(dataStore.currentText())
+        speachViewModel.input.speachText.accept(dataStore.input.nextText.value)
     }
     
     func doPpause() {
@@ -66,8 +69,6 @@ extension TextViewModel {
     
     func didFinishUtterance(_ utterance: AVSpeechUtterance) {
         dataStore.loadNextText()
-        
-        doStart()
     }
     
     func wilSpeakRange(_ data:(NSRange, AVSpeechUtterance)) {

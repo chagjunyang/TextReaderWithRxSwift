@@ -67,12 +67,10 @@ class ViewController: UIViewController {
 
 extension ViewController {
     func bindUI() {
-        buttonsView.playButton.rx.tap
-        
         textViewModel.output.text.drive(textView.rx.text).disposed(by: disposeBag)
-        buttonsView.playButton.rx.tap.bind(to: textViewModel.start).disposed(by: disposeBag)
-        buttonsView.pauseButton.rx.tap.bind(to: textViewModel.pause).disposed(by: disposeBag)
-        buttonsView.endButton.rx.tap.bind(to: textViewModel.end).disposed(by: disposeBag)
+        buttonsView.playButton.rx.tap.bind(to: textViewModel.input.start).disposed(by: disposeBag)
+        buttonsView.pauseButton.rx.tap.bind(to: textViewModel.input.pause).disposed(by: disposeBag)
+        buttonsView.endButton.rx.tap.bind(to: textViewModel.input.end).disposed(by: disposeBag)
 
         textViewModel.output.currentReadText.drive(onNext: {range in
             print(range)

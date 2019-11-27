@@ -33,7 +33,7 @@ class TextReaderTests: XCTestCase {
             
         }).disposed(by: disposeBag)
         
-        speachViewModel.input.speachText.onNext(speachString)
+        speachViewModel.input.speachText.accept(speachString)
         
         wait(for: [expectation], timeout: 10)
     }
