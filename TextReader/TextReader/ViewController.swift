@@ -16,6 +16,7 @@ class ViewController: UIViewController {
         let view = UITextView()
         
         view.translatesAutoresizingMaskIntoConstraints = false
+        view.isEditable = false
         
         self.view.addSubview(view)
         
@@ -72,8 +73,8 @@ extension ViewController {
         buttonsView.pauseButton.rx.tap.bind(to: textViewModel.input.pause).disposed(by: disposeBag)
         buttonsView.endButton.rx.tap.bind(to: textViewModel.input.end).disposed(by: disposeBag)
 
-        textViewModel.output.currentReadText.drive(onNext: {range in
-            print(range)
+        textViewModel.output.currentReadText.drive(onNext: {[weak self] attr in
+            self?.textView.attributedText = attr
         }).disposed(by: disposeBag)
     }
 }

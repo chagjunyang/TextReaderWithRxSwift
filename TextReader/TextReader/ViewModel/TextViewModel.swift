@@ -20,18 +20,20 @@ class TextViewModel {
     // MARK: Private
     private let speachViewModel = SpeachViewModel()
     private let dataStore = DataStore()
-    private var currentReadTextSubject = PublishRelay<NSRange>()
+    private var currentReadTextSubject = PublishRelay<NSAttributedString>()
     private var disposeBag = DisposeBag()
     
     init() {
-        output = Output(text: dataStore.output.text, currentReadText: currentReadTextSubject.asDriver(onErrorJustReturn: NSRange(location: 0, length: 0)))
+        output = Output(text: dataStore.output.text, currentReadText: currentReadTextSubject.asDriver(onErrorJustReturn: NSAttributedString(string: "")))
         
         input.start.subscribe(onNext: doStart).disposed(by: disposeBag)
         input.pause.subscribe(onNext: doPpause).disposed(by: disposeBag)
         input.end.subscribe(onNext: doEnd).disposed(by: disposeBag)
         
         speachViewModel.output.didFinish.drive(onNext: didFinishUtterance).disposed(by: disposeBag)
-        speachViewModel.output.wilSpeakRange.drive(onNext: wilSpeakRange).disposed(by: disposeBag)
+        speachViewModel.output.wilSpeakRange.map { (data: (NSRange, AVSpeechUtterance)) -> NSAttributedString in
+            return self.rageAttributedString(data.1.speechString, range: data.0)
+        }.drive(onNext: wilSpeakRange).disposed(by: disposeBag)
     }
     
     deinit {
@@ -52,7 +54,7 @@ extension TextViewModel {
     
     struct Output {
         var text: Driver<String>
-        var currentReadText: Driver<NSRange>
+        var currentReadText: Driver<NSAttributedString>
     }
     
     func doStart() {
@@ -71,7 +73,16 @@ extension TextViewModel {
         dataStore.loadNextText()
     }
     
-    func wilSpeakRange(_ data:(NSRange, AVSpeechUtterance)) {
-        currentReadTextSubject.accept(data.0)
+    func wilSpeakRange(_ attrText: NSAttributedString) {
+        currentReadTextSubject.accept(attrText)
+    }
+    
+    func rageAttributedString(_ text: String, range: NSRange) -> NSAttributedString {
+        let backgroundAttr: [NSAttributedString.Key: Any] = [NSAttributedString.Key.backgroundColor : UIColor.green]
+        let result = NSMutableAttributedString(string: text)
+        
+        result.addAttributes(backgroundAttr, range: range)
+
+        return result
     }
 }
