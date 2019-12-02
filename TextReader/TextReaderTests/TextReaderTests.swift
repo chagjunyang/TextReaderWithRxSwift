@@ -48,7 +48,7 @@ class TextReaderTests: XCTestCase {
             XCTAssertTrue(item.count > 0)
         }).disposed(by: disposeBag)
         
-        dataStore.loadNextText()
+        dataStore.input.loadNextText.accept(())
         
         wait(for: [expectation], timeout: 3)
     }

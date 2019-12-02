@@ -70,7 +70,7 @@ extension TextViewModel {
     }
     
     func didFinishUtterance(_ utterance: AVSpeechUtterance) {
-        dataStore.loadNextText()
+        dataStore.input.loadNextText.accept(())
     }
     
     func wilSpeakRange(_ attrText: NSAttributedString) {

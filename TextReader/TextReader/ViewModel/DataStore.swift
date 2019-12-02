@@ -26,6 +26,7 @@ class DataStore {
     let output: Output
     var disposeBag = DisposeBag()
     
+    // MARK: LifeCycle
     init() {
         output = Output(text: input.nextText.asDriver(onErrorJustReturn: ""))
         
@@ -36,7 +37,8 @@ class DataStore {
         disposeBag = DisposeBag()
     }
     
-    func loadNextText() {
+    // MARK: Logic
+    private func loadNextText() {
         input.nextText.accept("두 번쨰 텍스트.두 번쨰 텍스트.두 번쨰 텍스트.")
     }
 }
